@@ -1,0 +1,62 @@
+apply plugin: 'java'
+
+group = 'org.chunkly'
+version = '0.1-STABLE'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://libraries.minecraft.net"
+    }
+}
+
+dependencies {
+    compileOnly("net.md-5:bungeecord-api:1.21-R0.3")
+    compileOnly("net.md-5:bungeecord-config:1.21-R0.3")
+    compileOnly("org.projectlombok:lombok:1.18.32")
+    annotationProcessor("org.projectlombok:lombok:1.18.32")
+
+    implementation("com.zaxxer:HikariCP:7.0.2")
+    implementation("org.jdbi:jdbi3-core:3.53.0")
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.8")
+    implementation("at.favre.lib:bcrypt:0.10.2")
+}
+
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release.set(targetJavaVersion)
+    }
+}
+
+tasks.named('jar') {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    expand props
+    filteringCharset 'UTF-8'
+    filesMatching('bungee.yml') {
+        expand props
+    }
+}

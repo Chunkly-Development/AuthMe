@@ -1,0 +1,3 @@
+name: AuthMe
+version: '0.1-STABLE'
+main: org.chunkly.authme.AuthMe

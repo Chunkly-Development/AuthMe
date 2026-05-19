@@ -1,0 +1,3 @@
+name: AuthMe
+version: '${version}'
+main: org.chunkly.authme.AuthMe

@@ -1,0 +1,8 @@
+database:
+  enabled: false
+  url: "mariadb://authme:change-me@localhost:3306/authme"
+  pool-name: "AuthMe-Pool"
+  maximum-pool-size: 10
+  minimum-idle: 2
+  connection-timeout-ms: 5000
+  table-prefix: "authme_"
